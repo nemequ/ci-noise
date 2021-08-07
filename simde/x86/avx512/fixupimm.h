@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "flushsubnormal.h"
+#include "mov.h"
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -23,22 +24,54 @@ simde_mm_fixupimm_ps (simde__m128 a, simde__m128 b, simde__m128i c, int imm8)
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
     int32_t select;
-    if (simde_math_isnanf(s_.f32[i]))
-      select = 0;
-    else if (s_.f32[i] ==  SIMDE_FLOAT32_C(0.0))
-      select = 2;
-    else if (s_.f32[i] ==  SIMDE_FLOAT32_C(1.0))
-      select = 3;
-    else if (s_.f32[i] == -SIMDE_MATH_INFINITYF)
-      select = 4;
-    else if (s_.f32[i] ==  SIMDE_MATH_INFINITYF)
-      select = 5;
-    else if (s_.f32[i]  <  0)
-      select = 6;
-    else if (s_.f32[i]  >  0)
-      select = 7;
-    else
-      select = 1;
+    #if defined(fpclassify) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(9, 0, 0))
+      switch(fpclassify(s_.f32[i])) {
+        case FP_NORMAL:
+          select = ((s_.f32[i] == SIMDE_FLOAT32_C(1.0)) ? 3 : ((s_.f32[i] > 0) ? 7 : 6));
+          break;
+        case FP_ZERO:
+          select = 2;
+          break;
+        case FP_NAN:
+          select = 0;
+          break;
+        case FP_INFINITE:
+          select = ((s_.f32[i] > 0) ? 5 : 4);
+          break;
+      }
+    #elif SIMDE_MATH_BUILTIN_LIBM(fpclassify) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(5, 0, 0))
+      switch(__builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, a)) {
+        case FP_NORMAL:
+          select = ((s_.f32[i] == SIMDE_FLOAT32_C(1.0)) ? 3 : ((s_.f32[i] > 0) ? 7 : 6));
+          break;
+        case FP_ZERO:
+          select = 2;
+          break;
+        case FP_NAN:
+          select = 0;
+          break;
+        case FP_INFINITE:
+          select = ((s_.f32[i] > 0) ? 5 : 4);
+          break;
+      }
+    #else
+      if (simde_math_isnanf(s_.f32[i]))
+        select = 0;
+      else if (s_.f32[i] ==  SIMDE_FLOAT32_C(1.0))
+        select = 3;
+      else if (s_.f32[i] == -SIMDE_MATH_INFINITYF)
+        select = 4;
+      else if (s_.f32[i] ==  SIMDE_MATH_INFINITYF)
+        select = 5;
+      else if (s_.f32[i]  <  0)
+        select = 6;
+      else if (s_.f32[i]  >  0)
+        select = 7;
+      else if (s_.f32[i] ==  SIMDE_FLOAT32_C(0.0))
+        select = 2;
+      else
+        select = 1;
+    #endif
 
     switch (((c_.i32[i] >> (select << 2)) & 15)) {
       case 0:
@@ -104,6 +137,26 @@ simde_mm_fixupimm_ps (simde__m128 a, simde__m128 b, simde__m128i c, int imm8)
 #if defined(SIMDE_X86_AVX512F_ENABLE_NATIVE_ALIASES) && defined(SIMDE_X86_AVX512VL_ENABLE_NATIVE_ALIASES)
   #undef _mm_fixupimm_ps
   #define _mm_fixupimm_ps(a, b, c, imm8) simde_mm_fixupimm_ps(a, b, c, imm8)
+#endif
+
+#if defined(SIMDE_X86_AVX512F_NATIVE) && defined(SIMDE_X86_AVX512VL_NATIVE)
+  #define simde_mm_mask_fixupimm_ps(a, k, b, c, imm8) _mm_mask_fixupimm_ps(a, k, b, c, imm8)
+#else
+  #define simde_mm_mask_fixupimm_ps(a, k, b, c, imm8) simde_mm_mask_mov_ps(a, k, simde_mm_fixupimm_ps(a, b, c, imm8))
+#endif
+#if defined(SIMDE_X86_AVX512F_ENABLE_NATIVE_ALIASES) && defined(SIMDE_X86_AVX512VL_ENABLE_NATIVE_ALIASES)
+  #undef _mm_mask_fixupimm_ps
+  #define _mm_mask_fixupimm_ps(a, k, b, c, imm8) simde_mm_mask_fixupimm_ps(a, k, b, c, imm8)
+#endif
+
+#if defined(SIMDE_X86_AVX512F_NATIVE) && defined(SIMDE_X86_AVX512VL_NATIVE)
+  #define simde_mm_maskz_fixupimm_ps(k, a, b, c, imm8) _mm_maskz_fixupimm_ps(k, a, b, c, imm8)
+#else
+  #define simde_mm_maskz_fixupimm_ps(k, a, b, c, imm8) simde_mm_maskz_mov_ps(k, simde_mm_fixupimm_ps(a, b, c, imm8))
+#endif
+#if defined(SIMDE_X86_AVX512F_ENABLE_NATIVE_ALIASES) && defined(SIMDE_X86_AVX512VL_ENABLE_NATIVE_ALIASES)
+  #undef _mm_maskz_fixupimm_ps
+  #define _mm_maskz_fixupimm_ps(k, a, b, c, imm8) simde_mm_maskz_fixupimm_ps(k, a, b, c, imm8)
 #endif
 
 SIMDE_END_DECLS_
