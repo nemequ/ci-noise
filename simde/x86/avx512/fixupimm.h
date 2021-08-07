@@ -40,7 +40,7 @@ simde_mm_fixupimm_ps (simde__m128 a, simde__m128 b, simde__m128i c, int imm8)
           break;
       }
     #elif SIMDE_MATH_BUILTIN_LIBM(fpclassify) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(5, 0, 0))
-      switch(__builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, a)) {
+      switch(__builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, s_.f32[i])) {
         case FP_NORMAL:
           select = ((s_.f32[i] == SIMDE_FLOAT32_C(1.0)) ? 3 : ((s_.f32[i] > 0) ? 7 : 6));
           break;
