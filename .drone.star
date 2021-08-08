@@ -6,12 +6,14 @@
 def main(ctx):
   jobs = []
 
-  for arch in ['aarch64', 'armv8', 'armv7']:
+  # for arch in ['aarch64', 'armv8', 'armv7']:
+  for arch in ['aarch64']:
     drone_arch = 'arm'
     if arch == 'aarch64':
       drone_arch = 'arm64'
 
-    for compiler in ['gcc', 'clang']:
+    # for compiler in ['gcc', 'clang']:
+    for compiler in ['clang']:
       cc = compiler
       cxx = compiler + '++'
       compiler_flags = []
@@ -30,14 +32,14 @@ def main(ctx):
         packages.extend(['gcc', 'g++'])
       elif compiler == 'clang':
         compiler_flags.extend(['-Weverything', '-Werror'])
-        packages.extend(['clang'])
+        packages.extend(['clang-7'])
 
       cflags = ' '.join(compiler_flags)
       cxxflags = ' '.join(compiler_flags)
 
       environment = {
-        "CC": cc,
-        "CXX": cxx,
+        "CC": 'clang-7',
+        "CXX": 'clang++-7',
         "CFLAGS": cflags,
         "CXXFLAGS": cxxflags,
         "DEBIAN_FRONTEND": "noninteractive",
@@ -59,7 +61,7 @@ def main(ctx):
         "steps": [
           {
             "name": "test",
-            "image": "ubuntu:bionic",
+            "image": "ubuntu:focal",
             "environment": environment,
             "commands": [
               "cat /proc/cpuinfo",
@@ -90,7 +92,7 @@ def main(ctx):
   #   "steps": [
   #     {
   #       "name": "test",
-  #       "image": "ubuntu:bionic",
+  #       "image": "ubuntu:focal",
   #       "environment": {
   #         "CC": "clang",
   #         "CXX": "clang++",

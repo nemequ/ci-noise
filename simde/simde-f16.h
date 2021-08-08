@@ -74,7 +74,7 @@ SIMDE_BEGIN_DECLS_
     #define SIMDE_FLOAT16_API SIMDE_FLOAT16_API_FLOAT16
   #elif defined(__ARM_FP16_FORMAT_IEEE) && defined(SIMDE_ARM_NEON_FP16)
     #define SIMDE_FLOAT16_API SIMDE_FLOAT16_API_FP16
-  #elif defined(__clang__) && defined(__FLT16_MIN__)
+  #elif defined(__FLT16_MIN__) && defined(__clang__) // && (!defined(SIMDE_ARCH_AARCH64) || SIMDE_DETECT_CLANG_VERSION_CHECK(10,0,0))
     #define SIMDE_FLOAT16_API SIMDE_FLOAT16_API_FP16_NO_ABI
   #else
     #define SIMDE_FLOAT16_API SIMDE_FLOAT16_API_PORTABLE
