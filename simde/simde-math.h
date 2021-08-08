@@ -400,7 +400,7 @@ enum {
   #else
     static HEDLEY_INLINE
     int
-    simde_math_fpclassifyf(v) {
+    simde_math_fpclassifyf(float v) {
       int r;
       if (simde_math_isnormalf(v))
         r = SIMDE_MATH_FP_NORMAL;
