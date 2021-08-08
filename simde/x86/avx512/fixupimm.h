@@ -26,12 +26,7 @@ simde_mm_fixupimm_ps (simde__m128 a, simde__m128 b, simde__m128i c, int imm8)
     int32_t select = 1;
     switch(simde_math_fpclassifyf(s_.f32[i])) {
       case SIMDE_MATH_FP_NORMAL:
-        if (s_.f32[i] < SIMDE_FLOAT32_C(0.0))
-          select = 6;
-        else if (s_.f32[i] == SIMDE_FLOAT32_C(1.0))
-          select = 3;
-        else
-          select = 7;
+        select = (s_.f32[i] < SIMDE_FLOAT32_C(0.0)) ? 6 : (s_.f32[i] == SIMDE_FLOAT32_C(1.0)) ? 3 : 7;
         break;
       case SIMDE_MATH_FP_ZERO:
         select = 2;
