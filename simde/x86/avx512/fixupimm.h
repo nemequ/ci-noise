@@ -21,7 +21,7 @@ simde_mm_fixupimm_ps (simde__m128 a, simde__m128 b, simde__m128i c, int imm8)
     s_ = simde__m128_to_private(simde_x_mm_flushsubnormal_ps(b));
   simde__m128i_private c_ = simde__m128i_to_private(c);
 
-  SIMDE_VECTORIZE
+  // SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
     int32_t select = 1;
     switch(simde_math_fpclassifyf(s_.f32[i])) {
