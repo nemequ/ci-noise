@@ -416,7 +416,7 @@ enum {
 
       return r;
     }
-    #define simde_math_fpclassifyf simde_math_fpclassifyf
+    // #define simde_math_fpclassifyf simde_math_fpclassifyf
   #endif
 #endif
 
