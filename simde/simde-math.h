@@ -398,25 +398,12 @@ enum {
   #elif defined(fpclassify)
     #define simde_math_fpclassifyf(v) fpclassify(v)
   #else
-    static HEDLEY_INLINE
-    int
-    simde_math_fpclassifyf(float v) {
-      int r;
-
-      if (simde_math_isnormalf(v))
-        r = SIMDE_MATH_FP_NORMAL;
-      else if (v == 0.0f)
-        r = SIMDE_MATH_FP_ZERO;
-      else if (simde_math_isnanf(v))
-        r = SIMDE_MATH_FP_NAN;
-      else if (simde_math_isinff(v))
-        r = SIMDE_MATH_FP_INFINITE;
-      else
-        r = SIMDE_MATH_FP_SUBNORMAL;
-
-      return r;
-    }
-    // #define simde_math_fpclassifyf simde_math_fpclassifyf
+    #define simde_math_fpclassifyf(v) \
+      simde_math_isnormalf(v) ? SIMDE_MATH_FP_NORMAL    : \
+      (v == 0.0f)             ? SIMDE_MATH_FP_ZERO      : \
+      simde_math_isnanf(v)    ? SIMDE_MATH_FP_NAN       : \
+      simde_math_isinff(v)    ? SIMDE_MATH_FP_INFINITE  : \
+                                SIMDE_MATH_FP_SUBNORMAL
   #endif
 #endif
 
