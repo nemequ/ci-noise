@@ -34,6 +34,7 @@
 
 #include "hedley.h"
 #include "simde-features.h"
+#include "simde-common.h"
 
 #include <stdint.h>
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
