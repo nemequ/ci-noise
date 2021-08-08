@@ -34,7 +34,6 @@
 
 #include "hedley.h"
 #include "simde-features.h"
-#include "simde-common.h"
 
 #include <stdint.h>
 #if defined(SIMDE_ARM_NEON_A64V8_NATIVE)
@@ -376,21 +375,21 @@ SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
 #endif
 
 enum {
-    SIMDE_MATH_FP_NAN =
+  SIMDE_MATH_FP_NAN =
 # define SIMDE_MATH_FP_NAN 0
-      SIMDE_MATH_FP_NAN,
-    SIMDE_MATH_FP_INFINITE =
+    SIMDE_MATH_FP_NAN,
+  SIMDE_MATH_FP_INFINITE =
 # define SIMDE_MATH_FP_INFINITE 1
-      SIMDE_MATH_FP_INFINITE,
-    SIMDE_MATH_FP_ZERO =
+    SIMDE_MATH_FP_INFINITE,
+  SIMDE_MATH_FP_ZERO =
 # define SIMDE_MATH_FP_ZERO 2
-      SIMDE_MATH_FP_ZERO,
-    SIMDE_MATH_FP_SUBNORMAL =
+    SIMDE_MATH_FP_ZERO,
+  SIMDE_MATH_FP_SUBNORMAL =
 # define SIMDE_MATH_FP_SUBNORMAL 3
-      SIMDE_MATH_FP_SUBNORMAL,
-    SIMDE_MATH_FP_NORMAL =
+    SIMDE_MATH_FP_SUBNORMAL,
+  SIMDE_MATH_FP_NORMAL =
 # define SIMDE_MATH_FP_NORMAL 4
-      SIMDE_MATH_FP_NORMAL
+    SIMDE_MATH_FP_NORMAL
 };
 
 #if !defined(simde_math_fpclassifyf)
@@ -403,15 +402,16 @@ enum {
     int
     simde_math_fpclassifyf(float v) {
       int r;
+
       if (simde_math_isnormalf(v))
         r = SIMDE_MATH_FP_NORMAL;
-      else if (v == SIMDE_FLOAT32_C(0.0))
+      else if (v == 0.0f)
         r = SIMDE_MATH_FP_ZERO;
       else if (simde_math_isnanf(v))
         r = SIMDE_MATH_FP_NAN;
       else if (simde_math_isinff(v))
         r = SIMDE_MATH_FP_INFINITE;
-      else if (simde_math_issubnormalf(v))
+      else
         r = SIMDE_MATH_FP_SUBNORMAL;
 
       return r;
