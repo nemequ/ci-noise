@@ -374,6 +374,50 @@ SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
   #endif
 #endif
 
+enum {
+    SIMDE_MATH_FP_NAN =
+# define SIMDE_MATH_FP_NAN 0
+      SIMDE_MATH_FP_NAN,
+    SIMDE_MATH_FP_INFINITE =
+# define SIMDE_MATH_FP_INFINITE 1
+      SIMDE_MATH_FP_INFINITE,
+    SIMDE_MATH_FP_ZERO =
+# define SIMDE_MATH_FP_ZERO 2
+      SIMDE_MATH_FP_ZERO,
+    SIMDE_MATH_FP_SUBNORMAL =
+# define SIMDE_MATH_FP_SUBNORMAL 3
+      SIMDE_MATH_FP_SUBNORMAL,
+    SIMDE_MATH_FP_NORMAL =
+# define SIMDE_MATH_FP_NORMAL 4
+      SIMDE_MATH_FP_NORMAL
+};
+
+#if !defined(simde_math_fpclassifyf)
+  #if SIMDE_MATH_BUILTIN_LIBM(fpclassify)
+    #define simde_math_fpclassifyf(v) __builtin_fpclassify(SIMDE_MATH_FP_NAN, SIMDE_MATH_FP_INFINITE, SIMDE_MATH_FP_NORMAL, SIMDE_MATH_FP_SUBNORMAL, SIMDE_MATH_FP_ZERO, v)
+  #elif defined(fpclassify)
+    #define simde_math_fpclassifyf(v) fpclassify(v)
+  #else
+    static HEDLEY_INLINE
+    int
+    simde_math_fpclassifyf(v) {
+      int r;
+      if (simde_math_isnormalf(v))
+        r = SIMDE_MATH_FP_NORMAL;
+      else if (v == SIMDE_FLOAT32_C(0.0))
+        r = SIMDE_MATH_FP_ZERO;
+      else if (simde_math_isnanf(v))
+        r = SIMDE_MATH_FP_NAN;
+      else if (simde_math_isinff(v))
+        r = SIMDE_MATH_FP_INFINITE;
+      else if (simde_math_issubnormalf(v))
+        r = SIMDE_MATH_FP_SUBNORMAL;
+
+      return r;
+    }
+  #endif
+#endif
+
 /*** Manipulation functions ***/
 
 #if !defined(simde_math_nextafter)

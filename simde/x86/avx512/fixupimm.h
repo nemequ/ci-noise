@@ -24,54 +24,20 @@ simde_mm_fixupimm_ps (simde__m128 a, simde__m128 b, simde__m128i c, int imm8)
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
     int32_t select;
-    #if defined(fpclassify) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(9, 0, 0))
-      switch(fpclassify(s_.f32[i])) {
-        case FP_NORMAL:
-          select = ((s_.f32[i] == SIMDE_FLOAT32_C(1.0)) ? 3 : ((s_.f32[i] > 0) ? 7 : 6));
-          break;
-        case FP_ZERO:
-          select = 2;
-          break;
-        case FP_NAN:
-          select = 0;
-          break;
-        case FP_INFINITE:
-          select = ((s_.f32[i] > 0) ? 5 : 4);
-          break;
-      }
-    #elif SIMDE_MATH_BUILTIN_LIBM(fpclassify) && (!defined(__clang__) || SIMDE_DETECT_CLANG_VERSION_CHECK(5, 0, 0))
-      switch(__builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, s_.f32[i])) {
-        case FP_NORMAL:
-          select = ((s_.f32[i] == SIMDE_FLOAT32_C(1.0)) ? 3 : ((s_.f32[i] > 0) ? 7 : 6));
-          break;
-        case FP_ZERO:
-          select = 2;
-          break;
-        case FP_NAN:
-          select = 0;
-          break;
-        case FP_INFINITE:
-          select = ((s_.f32[i] > 0) ? 5 : 4);
-          break;
-      }
-    #else
-      if (simde_math_isnanf(s_.f32[i]))
-        select = 0;
-      else if (s_.f32[i] ==  SIMDE_FLOAT32_C(1.0))
-        select = 3;
-      else if (s_.f32[i] == -SIMDE_MATH_INFINITYF)
-        select = 4;
-      else if (s_.f32[i] ==  SIMDE_MATH_INFINITYF)
-        select = 5;
-      else if (s_.f32[i]  <  0)
-        select = 6;
-      else if (s_.f32[i]  >  0)
-        select = 7;
-      else if (s_.f32[i] ==  SIMDE_FLOAT32_C(0.0))
+    switch(simde_math_fpclassifyf(s_.f32[i])) {
+      case SIMDE_MATH_FP_NORMAL:
+        select = ((s_.f32[i] == SIMDE_FLOAT32_C(1.0)) ? 3 : ((s_.f32[i] > 0) ? 7 : 6));
+        break;
+      case SIMDE_MATH_FP_ZERO:
         select = 2;
-      else
-        select = 1;
-    #endif
+        break;
+      case SIMDE_MATH_FP_NAN:
+        select = 0;
+        break;
+      case SIMDE_MATH_FP_INFINITE:
+        select = ((s_.f32[i] > 0) ? 5 : 4);
+        break;
+    }
 
     switch (((c_.i32[i] >> (select << 2)) & 15)) {
       case 0:
