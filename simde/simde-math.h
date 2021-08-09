@@ -374,23 +374,23 @@ SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
   #endif
 #endif
 
-enum {
-  SIMDE_MATH_FP_NAN =
-// # define SIMDE_MATH_FP_NAN 0
-    0,
-  SIMDE_MATH_FP_INFINITE =
-// # define SIMDE_MATH_FP_INFINITE 1
-    1,
-  SIMDE_MATH_FP_ZERO =
-// # define SIMDE_MATH_FP_ZERO 2
-    2,
-  SIMDE_MATH_FP_SUBNORMAL =
-// # define SIMDE_MATH_FP_SUBNORMAL 3
-    3,
-  SIMDE_MATH_FP_NORMAL =
-// # define SIMDE_MATH_FP_NORMAL 4
-    4
-};
+# define SIMDE_MATH_FP_NAN 0
+# define SIMDE_MATH_FP_INFINITE 1
+# define SIMDE_MATH_FP_ZERO 2
+# define SIMDE_MATH_FP_SUBNORMAL 3
+# define SIMDE_MATH_FP_NORMAL 4
+// enum {
+//   SIMDE_MATH_FP_NAN =
+//     0,
+//   SIMDE_MATH_FP_INFINITE =
+//     1,
+//   SIMDE_MATH_FP_ZERO =
+//     2,
+//   SIMDE_MATH_FP_SUBNORMAL =
+//     3,
+//   SIMDE_MATH_FP_NORMAL =
+//     4
+// };
 
 #if !defined(simde_math_fpclassifyf)
   #if SIMDE_MATH_BUILTIN_LIBM(fpclassify)
