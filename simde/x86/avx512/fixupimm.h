@@ -24,7 +24,7 @@ simde_mm_fixupimm_ps (simde__m128 a, simde__m128 b, simde__m128i c, int imm8)
   SIMDE_VECTORIZE
   for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
     int32_t select = 1;
-    printf("%lu\n", simde_math_fpclassifyf(s_.f32[i]));
+    fprintf(stderr, "%f: %lu\n", s_.f32[i], simde_math_fpclassifyf(s_.f32[i]));
     switch(simde_math_fpclassifyf(s_.f32[i])) {
       case SIMDE_MATH_FP_NORMAL:
         select = (s_.f32[i] < SIMDE_FLOAT32_C(0.0)) ? 6 : (s_.f32[i] == SIMDE_FLOAT32_C(1.0)) ? 3 : 7;
