@@ -374,23 +374,23 @@ SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
   #endif
 #endif
 
+enum {
+  SIMDE_MATH_FP_NAN =
 # define SIMDE_MATH_FP_NAN 0
+    SIMDE_MATH_FP_NAN,
+  SIMDE_MATH_FP_INFINITE =
 # define SIMDE_MATH_FP_INFINITE 1
+    SIMDE_MATH_FP_INFINITE,
+  SIMDE_MATH_FP_ZERO =
 # define SIMDE_MATH_FP_ZERO 2
+    SIMDE_MATH_FP_ZERO,
+  SIMDE_MATH_FP_SUBNORMAL =
 # define SIMDE_MATH_FP_SUBNORMAL 3
+    SIMDE_MATH_FP_SUBNORMAL,
+  SIMDE_MATH_FP_NORMAL =
 # define SIMDE_MATH_FP_NORMAL 4
-// enum {
-//   SIMDE_MATH_FP_NAN =
-//     0,
-//   SIMDE_MATH_FP_INFINITE =
-//     1,
-//   SIMDE_MATH_FP_ZERO =
-//     2,
-//   SIMDE_MATH_FP_SUBNORMAL =
-//     3,
-//   SIMDE_MATH_FP_NORMAL =
-//     4
-// };
+    SIMDE_MATH_FP_NORMAL
+};
 
 #if !defined(simde_math_fpclassifyf)
   #if SIMDE_MATH_BUILTIN_LIBM(fpclassify)
@@ -399,11 +399,11 @@ SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
     #define simde_math_fpclassifyf(v) fpclassify(v)
   #else
     #define simde_math_fpclassifyf(v) \
-      simde_math_isnormalf(v) ? 4    : \
-      (v == 0.0f)             ? 2      : \
-      simde_math_isnanf(v)    ? 0       : \
-      simde_math_isinff(v)    ? 1  : \
-                                3
+      simde_math_isnormalf(v) ? SIMDE_MATH_FP_NORMAL    : \
+      (v == 0.0f)             ? SIMDE_MATH_FP_ZERO      : \
+      simde_math_isnanf(v)    ? SIMDE_MATH_FP_NAN       : \
+      simde_math_isinff(v)    ? SIMDE_MATH_FP_INFINITE  : \
+                                SIMDE_MATH_FP_SUBNORMAL
   #endif
 #endif
 
