@@ -25,7 +25,16 @@ simde_mm_fixupimm_ps (simde__m128 a, simde__m128 b, simde__m128i c, int imm8)
   for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
     int32_t select = 1;
     fprintf(stderr, "%f: %lu\n", s_.f32[i], simde_math_fpclassifyf(s_.f32[i]));
-    switch(simde_math_fpclassifyf(s_.f32[i])) {
+  #if defined(simde_math_fpclassifyf)
+    switch (simde_math_fpclassifyf(s_.f32[i])) {
+  #else
+    switch
+      ( simde_math_isnormalf(s_.f32[i]) ? SIMDE_MATH_FP_NORMAL    :
+        (s_.f32[i] == 0.0f)             ? SIMDE_MATH_FP_ZERO      :
+        simde_math_isnanf(s_.f32[i])    ? SIMDE_MATH_FP_NAN       :
+        simde_math_isinff(s_.f32[i])    ? SIMDE_MATH_FP_INFINITE  :
+                                          SIMDE_MATH_FP_SUBNORMAL) {
+  #endif
       case SIMDE_MATH_FP_NORMAL:
         select = (s_.f32[i] < SIMDE_FLOAT32_C(0.0)) ? 6 : (s_.f32[i] == SIMDE_FLOAT32_C(1.0)) ? 3 : 7;
         break;
