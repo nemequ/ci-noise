@@ -399,11 +399,11 @@ SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
     #define simde_math_fpclassifyf(v) fpclassify(v)
   #else
     #define simde_math_fpclassifyf(v) \
-      simde_math_isnormalf(v) ? SIMDE_MATH_FP_NORMAL    : \
-      (v == 0.0f)             ? SIMDE_MATH_FP_ZERO      : \
-      simde_math_isnanf(v)    ? SIMDE_MATH_FP_NAN       : \
-      simde_math_isinff(v)    ? SIMDE_MATH_FP_INFINITE  : \
-                                SIMDE_MATH_FP_SUBNORMAL
+      simde_math_isnormalf(v) ? 4    : \
+      (v == 0.0f)             ? 2      : \
+      simde_math_isnanf(v)    ? 0       : \
+      simde_math_isinff(v)    ? 1  : \
+                                3
   #endif
 #endif
 
